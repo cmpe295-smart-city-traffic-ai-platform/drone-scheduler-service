@@ -1,7 +1,7 @@
 # Drone Scheduler Service
 Cloud Based Drone Service
 
-*Important Note:*
+**Important Note:**
 This repo's code was created by a former team that contributed to this ongoing project.
 It is being used here as the task at hand is to integrate their code with the rest of the services.
 Their original code can be found at: https://github.com/saitejagoruganthu/Surveillance-Drone-Cloud-Platform
