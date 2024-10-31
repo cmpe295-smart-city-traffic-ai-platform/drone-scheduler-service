@@ -63,10 +63,10 @@ app.use(cookieParser());
 
 connectDb();
 
-app.use('/api',router);
-app.use('/api/upload', require('./controllers/upload'));
-app.use('/api/videoList', require('./controllers/videoList'));
-app.use('/api/videos', express.static('media/uploads'));
+app.use('/api/v1/droneScheduler',router);
+app.use('/api/v1/droneScheduler/upload', require('./controllers/upload'));
+app.use('/api/v1/droneScheduler/videoList', require('./controllers/videoList'));
+app.use('/api/v1/droneScheduler/videos', express.static('media/uploads'));
 app.get("/",(req,res)=>{
     res.send("API running");
 })

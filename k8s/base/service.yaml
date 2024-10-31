@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: drone-scheduler-service
+  namespace: smart-city-traffic
+spec:
+  selector:
+    app: drone-scheduler-service
+  ports:
+    - protocol: TCP
+      port: 5001
+      targetPort: 5001
