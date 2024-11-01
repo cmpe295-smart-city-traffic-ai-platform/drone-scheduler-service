@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: drone-scheduler-service-deployment
+  labels:
+    app: drone-scheduler-service
+  namespace: smart-city-traffic
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: drone-scheduler-service
+  template:
+    metadata:
+      labels:
+        app: drone-scheduler-service
+    spec:
+      containers:
+        - name: drone-scheduler-service
+          # image pushed to ECR in AWS
+          image: 319282596033.dkr.ecr.us-east-1.amazonaws.com/smart_city_traffic/drone-scheduler-service:1.0.0
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5001
