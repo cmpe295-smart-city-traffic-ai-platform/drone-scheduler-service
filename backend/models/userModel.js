@@ -5,12 +5,13 @@ const userModel=mongoose.Schema(
         firstname:{type:String,required:true},
         lastname:{type:String,required:true},
         email:{type:String, required:true, unique:true},
+        uuid:{type:String, required:true, unique:true},
         password:{type:String, minlength:5, required:true},
         role:{type:String,required:true},
         contact:{type:String,required:false},
-        location:{type:String,required:true},
-        gender:{type:String,required:true},
-        age:{type:Number,required:true},
+        location:{type:String,required:false},
+        gender:{type:String,required:false},
+        age:{type:Number,required:false},
         pic:
         {
             type:String,

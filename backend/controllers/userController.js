@@ -4,23 +4,31 @@ const jwt=require('jsonwebtoken');
   
 
 const signup=async(req,res,next)=>{
-    const {firstname,lastname,email,password,role,contact,location,gender,age}=req.body;
-    // console.log(firstname,lastname,email,password,role,contact,location,gender,age);
+    const {
+        firstname, lastname, email, password, role, uuid,
+        contact="5031234567",
+        location="SJC",
+        gender="female",
+        age=27,
+    }=req.body;
+
+    console.log(firstname,lastname,email,password,role,contact,location,gender,age);
     let existingUser;
     try{
-        existingUser=await User.findOne({email:email});
-        // console.log(existingUser);
+        existingUser=await User.findOne({uuid:uuid});
+        console.log(existingUser);
     }catch(err){
         console.log(err);
     }
     if(existingUser){
-        return res.status(400).json({message:"User Already Exists. Please Login"});
+        return res.status(400).json({message:"User Already Exists. Please Login", user: existingUser._id});
     }
     const hashedPassword=bcrypt.hashSync(password);
     const customer= new User({
         firstname,
         lastname,
         email,
+        uuid,
         password:hashedPassword,
         role,
         contact,
@@ -36,7 +44,7 @@ const signup=async(req,res,next)=>{
         return res.status(400).json({message:"Error While Registering the User"});
     }
 
-    return res.status(201).json({message:"User Created Successfully"});
+    return res.status(201).json({message:"User Created Successfully with ID: " + uuid});
 }
 
 const login=async(req,res,next)=>{
