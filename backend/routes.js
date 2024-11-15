@@ -10,6 +10,7 @@ const droneFunctions=require('./controllers/droneController');
 
 //Test - Saiteja
 const myDroneFunctions=require('./controllers/droneDetailsController');
+const myDroneSupport=require('./controllers/droneController');
 const myMissionFunctions=require('./controllers/missionDetailsController');
 const myMissionNotifFunctions=require('./controllers/missionNotificationController');
 //const myTripFunctions=require('./controllers/tripDetailsController');
@@ -39,6 +40,7 @@ router.get("/countdrones1",myDroneFunctions.countDrones);
 router.get("/getalldrones1",myDroneFunctions.getAllDrones);
 router.get("/getonedrone1/:drone_id",myDroneFunctions.getOneDrone);
 router.get("/getdronesdataformap1",myDroneFunctions.getDronesDataForMap);
+router.post("/getdronesformap", myDroneSupport.getDronesForMap);
 router.get("/getonemission1/:mission_id",myMissionFunctions.getOneMission);
 router.get("/viewmissions1",myMissionFunctions.getMissions);
 //router.get("/viewtrips1",myTripFunctions.ViewTrips);
