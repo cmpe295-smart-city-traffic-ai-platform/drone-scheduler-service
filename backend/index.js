@@ -7,9 +7,18 @@ const router=require('./routes');
 const http = require('http');
 const socketIo = require('socket.io');
 const { log } = require("console");
+const path = require('path');
+const morgan = require('morgan');
 
 dotenv.config();
 const app=express();
+
+// log requests
+app.use(morgan());
+
+// serve frontend drone scheduler service
+app.use(express.static(path.join(__dirname, '/../build')));
+
 const server = http.createServer(app);
 const isDev = process.env.NODE_ENV !== 'production';
 console.log(isDev);
@@ -26,6 +35,9 @@ const io = socketIo(server, {
 });
 
 app.use(cors(corsOptions));
+
+console.log(path.join(__dirname, '/../build'))
+
 
 // CORS middleware for socket.io
 // io.use((socket, next) => {
@@ -67,9 +79,14 @@ app.use('/api/v1/droneScheduler',router);
 app.use('/api/v1/droneScheduler/upload', require('./controllers/upload'));
 app.use('/api/v1/droneScheduler/videoList', require('./controllers/videoList'));
 app.use('/api/v1/droneScheduler/videos', express.static('media/uploads'));
-app.get("/",(req,res)=>{
-    res.send("API running");
-})
+// app.get("/",(req,res)=>{
+//     res.send("API running");
+// })
+
+
+app.get('/*', (req, res) => {
+  res.sendFile(path.join(__dirname + '/../build/index.html'));
+});
 
 const PORT= process.env.PORT || 5001;
 
