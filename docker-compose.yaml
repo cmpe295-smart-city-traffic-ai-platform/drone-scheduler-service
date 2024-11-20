@@ -1,0 +1,5 @@
+services:
+  drone-scheduler-frontend:
+    image: drone-scheduler-service:1.0.0
+    ports:
+      - 5001:5001
