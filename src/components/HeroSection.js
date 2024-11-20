@@ -30,16 +30,16 @@ function HeroSection() {
           buttonSize='btn--large'
           onClick={handleLogin}
         >
-          Login
+          Enter
         </Button>
-        <Button
+        {/* <Button
           className='btns'
           buttonStyle='btn--outline'
           buttonSize='btn--large'
           onClick={handleRegister}
         >
           Register
-        </Button>
+        </Button> */}
       </div>
     </div>
   );

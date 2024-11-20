@@ -104,6 +104,106 @@ const LoginPage = () => {
       return data;
   }
 
+  const getRealUserDetails = () => {
+    const email = localStorage.getItem("email");
+    const role =  localStorage.getItem("role");
+    const lastN = localStorage.getItem("lastName");
+    const firstN = localStorage.getItem("firstName");
+    const user_id = localStorage.getItem("user_id");
+    const password = localStorage.getItem("password");
+    let userdetails = null;
+  
+    console.log('userdetails found:');
+    console.log(email, role, firstN, lastN, user_id, password);
+  
+    if (!email || !role || !firstN || !lastN || !user_id || !password) {
+      alert('User not logged in');
+      window.location = "/login"; 
+    }
+  
+    const userData = {email, role, firstN, lastN, user_id, password};
+  
+    const logIn=async (values)=>{
+      const res=await axios.post(`${BASE_URL}${API_ENDPOINTS.login}`,{
+          email:values.email,
+          password:values.password,
+      },{withCredentials: true}).catch((err)=>{
+        // setSnackbarMsg(err.response.data.message);
+        // setState({ ...state, open: true });
+      })
+      const data=await res.data;
+      // console.log(data);
+      return data;
+    }
+  
+    const signUp=async (values)=>{
+      console.log('Values sent for sign up:');
+      console.log(values);
+      const res=await axios.post(`${BASE_URL}${API_ENDPOINTS.signUp}`,{
+          // email:values.Email,
+          // password:values.Password,
+          firstname: values.firstN,
+          lastname: values.lastN,
+          email: values.email,
+          password: values.password,
+          role: values.role,
+          uuid: values.user_id,
+      },{withCredentials: true}).catch((err)=>{
+        // setSnackbarMsg(err.response.data.message);
+        // setState({ ...state, open: true });
+      })
+      const data=await res.data;
+      // console.log(data);
+      return data;
+    }
+  
+    signUp(userData).then(async (res)=>{
+      if (!res?.uuid) {
+        // This should not happen
+        console.log(res);
+        console.log(res.response);
+        console.log(res.response.body);
+        console.log(res.response.data.message);
+        alert('User sign up failed: ' + res.response.data.message);
+      } else {
+        console.log("User sign up worked!!");
+      }
+    });
+  
+    // Log user in
+    logIn(userData).then(async(data)=>{
+      // console.log(data);
+      const res=await axios.get(
+        `${BASE_URL}${API_ENDPOINTS.getUserProfile}/${userData.email}`
+      );
+      // console.log("USER DETAILS:",res.data.user);
+      // TenantIdSingleton.id = email;
+      // Object.freeze(TenantIdSingleton);
+      // res.data.user.email = "marepalliharish@gmail.com";
+      // res.data.user.lastname = "Marepalli";
+      // setSnackbarMsg(data.message);
+      // setState({ ...state, open: true });
+      setTimeout(()=> {
+        window.sessionStorage.setItem("userdetails",JSON.stringify(res.data.user));
+        //window.localStorage.setItem("page","Dashboard");
+        console.log("USER DETAILS:",res.data.user);
+        userdetails = res.data.user;
+        // window.location = '/dashboard';
+        navigate("/dashboard");
+      }, 1000)
+    });
+
+    return userdetails;
+  };
+
+
+  getRealUserDetails();
+  const userExists = window.sessionStorage.getItem("userdetails");
+  console.log("USER EXISTS:",userExists);
+  if (userExists) {
+    navigate('/dashboard');
+    return <h1 style={{ marginTop:'5%' }}>Loading</h1>;
+  }
   return (
     // <div className="login-container" style={{marginTop: "5em"}}>
     //   <h2 style={{color: "#000"}}>Login</h2>

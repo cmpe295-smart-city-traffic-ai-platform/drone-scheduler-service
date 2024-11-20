@@ -12,8 +12,10 @@ const signup=async(req,res,next)=>{
         age=27,
     }=req.body;
 
-    console.log(firstname,lastname,email,password,role,contact,location,gender,age);
+    console.log('data sent in req');
+    console.log(firstname,lastname,email,password,role,uuid,contact,location,gender,age);
     let existingUser;
+    console.log('searching with uuid: ' + uuid);
     try{
         existingUser=await User.findOne({uuid:uuid});
         console.log(existingUser);
@@ -21,8 +23,17 @@ const signup=async(req,res,next)=>{
         console.log(err);
     }
     if(existingUser){
-        return res.status(400).json({message:"User Already Exists. Please Login", user: existingUser._id});
+        console.log('reached1');
+        return res.status(201).json({message:"Existing user found Successfully with ID: " + existingUser.uuid, uuid: existingUser.uuid});
+        // return res.status(400).json({message:"User Already Exists. Please Login", user: existingUser._id});
     }
+
+    let updatedRole = role;
+
+    if (role === 'traffic') {
+        updatedRole = 'Admin';
+    }
+
     const hashedPassword=bcrypt.hashSync(password);
     const customer= new User({
         firstname,
@@ -30,7 +41,7 @@ const signup=async(req,res,next)=>{
         email,
         uuid,
         password:hashedPassword,
-        role,
+        role:updatedRole,
         contact,
         location,
         gender,
@@ -43,8 +54,8 @@ const signup=async(req,res,next)=>{
         console.log(err);
         return res.status(400).json({message:"Error While Registering the User"});
     }
-
-    return res.status(201).json({message:"User Created Successfully with ID: " + uuid});
+    console.log('reached2');
+    return res.status(201).json({message:"User Created Successfully with ID: " + uuid, uuid: uuid});
 }
 
 const login=async(req,res,next)=>{
