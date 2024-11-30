@@ -5,6 +5,152 @@ const Mission=require('../models/missionDetailsModel');
 const bcrypt=require('bcryptjs');
 const jwt=require('jsonwebtoken');
   
+const getRandomModel = () => {
+  const options = [
+    'Mavic Air 2',
+    'Anafi',
+    'Phantom 4 Pro V2.0',
+    'Inspire 2'
+  ];
+
+  return options[Math.floor(Math.random() * 4)]
+}
+
+const getRandomType = () => {
+  const options = [
+    'QuadCopter',
+    'HexaCopter',
+    'Fixed-Wing',
+    'Multi-purpose Drone'
+  ];
+
+  return options[Math.floor(Math.random() * 4)]
+}
+
+const getRandomDescription = () => {
+  const options = [
+    'The DJI Mavic Air 2 is a compact and foldable drone designed for aerial photography and videography enthusiasts. It boasts advanced features such as 4K video recording, 48MP stills, obstacle avoidance, and intelligent flight modes.',
+    'The Parrot Anafi is a lightweight and foldable drone designed for portability and versatility. It features 4K HDR video recording, 21MP stills, zoom capabilities, and compact design for easy transportation.',
+    'The DJI Phantom 4 Pro V2.0 is a professional-grade drone equipped with',
+    'The DJI Inspire 2 is a professional-grade drone designed for high-end'
+  ];
+
+  return options[Math.floor(Math.random() * 4)]
+}
+
+const getRandomWeight = () => {
+  return Math.floor(Math.random() * (500 - 200) + 200);
+}
+
+const getRandomDimensions = () => {
+  return {
+    length: Math.floor(Math.random() * (500 - 200) + 200),
+    width: Math.floor(Math.random() * (500 - 200) + 200),
+    height: Math.floor(Math.random() * (500 - 200) + 200),
+  };
+}
+
+const getRandomBatteryLife = () => {
+  return Math.floor(Math.random() * (100 - 0) + 0);
+}
+
+const getRandomBatteryCapacity = () => {
+  return Math.floor(Math.random() * (2000 - 1000) + 1000);
+}
+
+const getRandomSpeed = () => {
+  return Math.floor(Math.random() * (100 - 50) + 50);
+}
+
+const getRandomRange = () => {
+  return Math.floor(Math.random() * (200 - 50) + 50);
+}
+
+const getRandomLat = () => {
+  const minLat = 37.2;   // South around San Jose
+  const maxLat = 37.5;   // North near Palo Alto
+
+  return Math.floor(Math.random() * (maxLat - minLat) + minLat);
+}
+
+const getRandomLong = () => {
+  const minLng = -122.2; // West near the coast and Highway 280
+  const maxLng = -121.8; // East near Fremont
+
+  return Math.floor(Math.random() * (maxLng - minLng) + minLng);
+}
+
+const getRandomStatus = () => {
+  const options = [
+    'Active',
+    'Stopped',
+    'Repair',
+  ];
+
+  return options[Math.floor(Math.random() * 3)]
+}
+
+const getRandomServiceType = () => {
+  const options = [
+    'Crowd Monitoring',
+    'Emergency response',
+    'Agriculture',
+    'Campus Perimeter Patrol',
+    'Parking Lot Surveillance',
+    'Search and Rescue',
+    'Powerline Inspection',
+    'Industrial Site Monitoring',
+    'Building Inspection',
+    'Infrastructure Inspection',
+    'Campus Perimeter Patrol',
+  ];
+
+  var arr = [];
+  while(arr.length < 3){
+      var r = Math.floor(Math.random() * 11);
+      if(arr.indexOf(r) === -1) arr.push(r);
+  }
+
+  return [
+    options[arr[0]],
+    options[arr[1]],
+    options[arr[2]],
+  ];
+}
+
+const getRandomCameraSpecs = () => {
+  const resOptions = [
+    '2K',
+    '4K',
+    '8K',
+  ];
+  const senseOptions = [
+    '1-inch CMOS',
+    '1/2-inch CMOS',
+    '1/2.8-inch CMOS',
+  ];
+  const aperatureOptions = [
+    'f/1.8',
+    'f/2.8',
+    'f/2.0',
+  ];
+
+  return {
+    resolution: resOptions[Math.floor(Math.random() * 3)],
+    sensor_size: senseOptions[Math.floor(Math.random() * 3)],
+    max_aperture: aperatureOptions[Math.floor(Math.random() * 3)],
+    field_of_view: Math.floor(Math.random() * (100 - 90) + 900),
+  };
+}
+
+const getRandomLidar = () => {
+  const options = [
+    true,
+    false,
+  ];
+
+  return options[Math.floor(Math.random() * 2)]
+}
 
 const createDrone=async(req,res,next)=>{
     const {drone_id,name,manufacturer,model_number,price}=req.body;
@@ -27,6 +173,32 @@ const createDrone=async(req,res,next)=>{
         model_number,
         price,
     });
+
+    const creationDate = new Date();
+
+    const droneDetails= new DroneDetails({
+      drone_id,
+      name,
+      model: getRandomModel(),
+      type: getRandomType(),
+      manufacturer,
+      description: getRandomDescription(),
+      price,
+      weight: getRandomWeight(),
+      dimensions: getRandomDimensions(),
+      battery_life: getRandomBatteryLife(),
+      battery_capacity: getRandomBatteryCapacity(),
+      max_speed: getRandomSpeed(),
+      range: getRandomRange(),
+      camera_specs: getRandomCameraSpecs(),
+      lidar: getRandomLidar(),
+      created_at: creationDate,
+      updated_at: creationDate,
+      last_known_lat: getRandomLat(),
+      last_known_long: getRandomLong(),
+      last_known_status: getRandomStatus(),
+      service_types: getRandomServiceType(),
+  });
     console.log("Adding Drone");
 
     try{
@@ -34,6 +206,14 @@ const createDrone=async(req,res,next)=>{
         console.log("saved");
     }catch (err){
         console.log(err);
+    }
+
+    try{
+      await droneDetails.save();
+      console.log("drone details saved");
+    }catch (err){
+      console.log('drone details error');
+      console.log(err);
     }
 
     return res.status(201).json({message:Drone});
