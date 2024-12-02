@@ -385,7 +385,6 @@ const getDronesForMap=async(req,res,next)=>{
     try {
       let user=await User.findOne({uuid:uuid});
       email = user.email;
-      result.email = email;
     } catch (e) {
       console.log(e);
       return res.status(400).json({message:"Error While Getting Email"});
