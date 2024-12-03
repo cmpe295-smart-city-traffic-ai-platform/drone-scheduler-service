@@ -61,6 +61,7 @@ const signup=async(req,res,next)=>{
 const login=async(req,res,next)=>{
     const {email,password}=req.body;
     let existingUser;
+    console.log('email n pwd',email,password);
     //return res.status(200).json({message:"User not found."})
     try{
         existingUser=await User.findOne({email:email});

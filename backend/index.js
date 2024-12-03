@@ -22,17 +22,43 @@ app.use(express.static(path.join(__dirname, '/../build')));
 const server = http.createServer(app);
 const isDev = process.env.NODE_ENV !== 'production';
 console.log(isDev);
+// const corsOptions = {
+//   // origin: 'https://dronecloud.saitejagoruganthu.com',
+//   origin: isDev ? 'http://localhost:3000' : 'https://dronecloud.saitejagoruganthu.com',
+//   credentials: true,
+// };
+
+const allowedOrigins = isDev 
+  ? ['http://localhost:3000', 'http://localhost:3001'] 
+  : ['https://dronecloud.saitejagoruganthu.com'];
+
 const corsOptions = {
-  // origin: 'https://dronecloud.saitejagoruganthu.com',
-  origin: isDev ? 'http://localhost:3000' : 'https://dronecloud.saitejagoruganthu.com',
-  credentials: true,
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      callback(null, true);
+    } else {
+      callback(new Error('Origin not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies or authentication headers
 };
+
+// const io = socketIo(server, {
+//   cors: {
+//     // origin: "https://dronecloud.saitejagoruganthu.com"
+//     origin: isDev ? 'http://localhost:3000' : 'https://dronecloud.saitejagoruganthu.com',
+//   }
+// });
+
 const io = socketIo(server, {
   cors: {
-    // origin: "https://dronecloud.saitejagoruganthu.com"
-    origin: isDev ? 'http://localhost:3000' : 'https://dronecloud.saitejagoruganthu.com',
-  }
+    origin: allowedOrigins,
+    methods: ['GET', 'POST'], // Specify allowed methods
+    credentials: true, // Enable credentials (e.g., cookies, headers)
+  },
 });
+
 
 app.use(cors(corsOptions));
 
