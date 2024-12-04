@@ -13,9 +13,9 @@ const fs = require("fs");
 
 const options = {
 
-  key: fs.readFileSync(path.join(dirname, "localhost-key.pem")),
+  key: fs.readFileSync(path.join(__dirname, "localhost-key.pem")),
 
-  cert: fs.readFileSync(path.join(dirname, "localhost.pem")),
+  cert: fs.readFileSync(path.join(__dirname, "localhost.pem")),
 
 };
 
