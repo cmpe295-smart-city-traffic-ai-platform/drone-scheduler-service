@@ -9,6 +9,15 @@ const socketIo = require('socket.io');
 const { log } = require("console");
 const path = require('path');
 const morgan = require('morgan');
+const fs = require("fs");
+
+const options = {
+
+  key: fs.readFileSync(path.join(dirname, "localhost-key.pem")),
+
+  cert: fs.readFileSync(path.join(dirname, "localhost.pem")),
+
+};
 
 dotenv.config();
 const app=express();
@@ -19,7 +28,7 @@ app.use(morgan());
 // serve frontend drone scheduler service
 app.use(express.static(path.join(__dirname, '/../build')));
 
-const server = http.createServer(app);
+const server = http.createServer(options, app);
 const isDev = process.env.NODE_ENV !== 'production';
 console.log(isDev);
 // const corsOptions = {
