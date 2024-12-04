@@ -28,20 +28,9 @@ console.log(isDev);
 //   credentials: true,
 // };
 
-const allowedOrigins = isDev 
-  ? ['http://localhost:3000', 'http://localhost:3001'] 
-  : ['https://dronecloud.saitejagoruganthu.com'];
-
 const corsOptions = {
-  origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      callback(null, true);
-    } else {
-      callback(new Error('Origin not allowed by CORS'));
-    }
-  },
-  credentials: true, // Allow cookies or authentication headers
+  origin: true,
+  credentials: true,
 };
 
 // const io = socketIo(server, {
