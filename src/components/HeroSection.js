@@ -12,12 +12,6 @@ function HeroSection() {
 
   useEffect(() => {
     const handleMessage = (event) => {
-        // Validate the origin of the message
-        if (event.origin !== "http://localhost:3000") {
-            console.warn("Origin not allowed:", event.origin);
-            return;
-        }
-
         // Process the received data
         console.log("Message received:", event.data);
         setUserData(event.data);
