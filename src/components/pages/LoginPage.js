@@ -113,7 +113,7 @@ const LoginPage = () => {
     const password = localStorage.getItem("password");
     let userdetails = null;
   
-    console.log('userdetails found:');
+    console.log('userdetails found in locale storage:');
     console.log(email, role, firstN, lastN, user_id, password);
   
     if (!email || !role || !firstN || !lastN || !user_id || !password) {
@@ -124,6 +124,8 @@ const LoginPage = () => {
     const userData = {email, role, firstN, lastN, user_id, password};
   
     const logIn=async (values)=>{
+      console.log('values sent for log in:');
+      console.log(values);
       const res=await axios.post(`${BASE_URL}${API_ENDPOINTS.login}`,{
           email:values.email,
           password:values.password,
@@ -132,7 +134,8 @@ const LoginPage = () => {
         // setState({ ...state, open: true });
       })
       const data=await res.data;
-      // console.log(data);
+      console.log('response after logging user into drone app:');
+      console.log(data);
       return data;
     }
   
@@ -153,7 +156,8 @@ const LoginPage = () => {
         // setState({ ...state, open: true });
       })
       const data=await res.data;
-      // console.log(data);
+      console.log('response after signing up user into drone app:');
+      console.log(data);
       return data;
     }
   
@@ -184,9 +188,10 @@ const LoginPage = () => {
       // setSnackbarMsg(data.message);
       // setState({ ...state, open: true });
       setTimeout(()=> {
+        console.log('user details added to session storage for drone app:');
+        console.log(res.data.user);
         window.sessionStorage.setItem("userdetails",JSON.stringify(res.data.user));
         //window.localStorage.setItem("page","Dashboard");
-        console.log("USER DETAILS:",res.data.user);
         userdetails = res.data.user;
         // window.location = '/dashboard';
         navigate("/dashboard");
@@ -199,7 +204,7 @@ const LoginPage = () => {
 
   getRealUserDetails();
   const userExists = window.sessionStorage.getItem("userdetails");
-  console.log("USER EXISTS:",userExists);
+  console.log("USER EXISTS in session storage:",userExists);
   if (userExists) {
     navigate('/dashboard');
     return <h1 style={{ marginTop:'5%' }}>Loading</h1>;

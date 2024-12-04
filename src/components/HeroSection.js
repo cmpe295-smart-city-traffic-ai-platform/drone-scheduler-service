@@ -33,6 +33,8 @@ function HeroSection() {
 }, []);
 
   const handleLogin = () => {
+    console.log('user data that we get from main app:');
+    console.log(userData);
     const email = userData.email;
     const password = userData.password;
     const firstN = userData.firstN;
@@ -46,6 +48,7 @@ function HeroSection() {
     localStorage.setItem("firstName", firstN);
     localStorage.setItem("user_id", user_id);
     localStorage.setItem("password", password);
+    console.log('user data set in localStorage');
     // Perform any necessary login actions
     navigate('/login');
   };
@@ -54,8 +57,6 @@ function HeroSection() {
     // Perform any necessary login actions
     navigate('/register');
   };
-
-  console.log('did it work?', userData);
 
   return (
     <div className='hero-container'>
