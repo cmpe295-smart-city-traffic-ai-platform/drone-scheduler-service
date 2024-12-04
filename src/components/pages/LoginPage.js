@@ -124,6 +124,8 @@ const LoginPage = () => {
     const userData = {email, role, firstN, lastN, user_id, password};
   
     const logIn=async (values)=>{
+      console.log('Values received in login frunction on frontend');
+      console.log(values);
       const res=await axios.post(`${BASE_URL}${API_ENDPOINTS.login}`,{
           email:values.email,
           password:values.password,
@@ -131,6 +133,12 @@ const LoginPage = () => {
         // setSnackbarMsg(err.response.data.message);
         // setState({ ...state, open: true });
       })
+      console.log('response from backend login function');
+      console.log('--1', res);
+      console.log('--2', res?.data);
+      console.log('--3', res?.data?.user);
+      console.log('--4', res?.user);
+
       const data=await res.data;
       // console.log(data);
       return data;
@@ -171,7 +179,13 @@ const LoginPage = () => {
     });
   
     // Log user in
+    console.log('User data passed to login on frontend');
+    console.log(userData);
     logIn(userData).then(async(data)=>{
+      console.log('user data vs data in log frontend');
+      console.log(data);
+      console.log(userData);
+
       // console.log(data);
       const res=await axios.get(
         `${BASE_URL}${API_ENDPOINTS.getUserProfile}/${userData.email}`
@@ -184,9 +198,9 @@ const LoginPage = () => {
       // setSnackbarMsg(data.message);
       // setState({ ...state, open: true });
       setTimeout(()=> {
+        console.log("USER DETAILS stored in session storage fron login on frontend:",res.data.user);
         window.sessionStorage.setItem("userdetails",JSON.stringify(res.data.user));
         //window.localStorage.setItem("page","Dashboard");
-        console.log("USER DETAILS:",res.data.user);
         userdetails = res.data.user;
         // window.location = '/dashboard';
         navigate("/dashboard");
@@ -199,7 +213,7 @@ const LoginPage = () => {
 
   getRealUserDetails();
   const userExists = window.sessionStorage.getItem("userdetails");
-  console.log("USER EXISTS:",userExists);
+  console.log("USER EXISTS - user received from session storage:",userExists);
   if (userExists) {
     navigate('/dashboard');
     return <h1 style={{ marginTop:'5%' }}>Loading</h1>;

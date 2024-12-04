@@ -61,7 +61,7 @@ const signup=async(req,res,next)=>{
 const login=async(req,res,next)=>{
     const {email,password}=req.body;
     let existingUser;
-    console.log('email n pwd',email,password);
+    console.log('email n pwd received from backend login endpoint',email,password);
     //return res.status(200).json({message:"User not found."})
     try{
         existingUser=await User.findOne({email:email});
@@ -88,6 +88,8 @@ const login=async(req,res,next)=>{
         httpOnly: true,
         sameSite: 'lax',
     })
+    console.log('found existing user with no issues and returning');
+    console.log(existingUser);
     return res.status(200).json({message:"Succesfully Logged In", user:existingUser,token})
 }
 
