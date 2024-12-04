@@ -42,7 +42,7 @@ const corsOptions = {
 
 const io = socketIo(server, {
   cors: {
-    origin: allowedOrigins,
+    origin: true,
     methods: ['GET', 'POST'], // Specify allowed methods
     credentials: true, // Enable credentials (e.g., cookies, headers)
   },
