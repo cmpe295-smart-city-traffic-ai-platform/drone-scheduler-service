@@ -17,12 +17,16 @@ const CreateDrone = () => {
   };
 
   const sendRequest=async(values)=>{
+    let userdetails=JSON.parse(window.sessionStorage.getItem("userdetails"));
+    console.log('user details when creating drone: '+userdetails );
+
       const res=await axios.post(`${BASE_URL}${API_ENDPOINTS.addDrone}`,{
         drone_id:values.DroneId,
         name:values.Name,
         manufacturer:values.Manufacturer,
         model_number:values.ModelNumber,
         price:values.Price,
+        email:userdetails.email
       },{withCredentials: true}).catch(err=>console.log(err))
       const data=await res.data;
       return data;
