@@ -120,92 +120,87 @@ const LoginPage = () => {
       alert('User not logged in');
       window.location = "/login"; 
     }
-  
-    const userData = {email, role, firstN, lastN, user_id, password};
-  
-    const logIn=async (values)=>{
-      console.log('Values received in login frunction on frontend');
+
+    const userData = { email, role, firstN, lastN, user_id, password };
+
+    const logIn = async (values) => {
+      console.log('Values received in login function on frontend');
       console.log(values);
-      const res=await axios.post(`${BASE_URL}${API_ENDPOINTS.login}`,{
-          email:values.email,
-          password:values.password,
-      },{withCredentials: true}).catch((err)=>{
+      const res = await axios.post(`${BASE_URL}${API_ENDPOINTS.login}`, {
+        email: values.email,
+        password: values.password,
+      }, { withCredentials: true }).catch((err) => {
+        // Handle error
         // setSnackbarMsg(err.response.data.message);
         // setState({ ...state, open: true });
-      })
+      });
+
       console.log('response from backend login function');
       console.log('--1', res);
       console.log('--2', res?.data);
       console.log('--3', res?.data?.user);
       console.log('--4', res?.user);
 
-      const data=await res.data;
-      // console.log(data);
+      const data = await res.data;
       return data;
-    }
-  
-    const signUp=async (values)=>{
+    };
+
+    const signUp = async (values) => {
       console.log('Values sent for sign up:');
       console.log(values);
-      const res=await axios.post(`${BASE_URL}${API_ENDPOINTS.signUp}`,{
-          // email:values.Email,
-          // password:values.Password,
-          firstname: values.firstN,
-          lastname: values.lastN,
-          email: values.email,
-          password: values.password,
-          role: values.role,
-          uuid: values.user_id,
-      },{withCredentials: true}).catch((err)=>{
+      const res = await axios.post(`${BASE_URL}${API_ENDPOINTS.signUp}`, {
+        firstname: values.firstN,
+        lastname: values.lastN,
+        email: values.email,
+        password: values.password,
+        role: values.role,
+        uuid: values.user_id,
+      }, { withCredentials: true }).catch((err) => {
+        // Handle error
         // setSnackbarMsg(err.response.data.message);
         // setState({ ...state, open: true });
-      })
-      const data=await res.data;
-      // console.log(data);
-      return data;
-    }
-  
-    signUp(userData).then(async (res)=>{
-      if (!res?.uuid) {
-        // This should not happen
-        console.log(res);
-        console.log(res.response);
-        console.log(res.response.body);
-        console.log(res.response.data.message);
-        alert('User sign up failed: ' + res.response.data.message);
-      } else {
-        console.log("User sign up worked!!");
-      }
-    });
-  
-    // Log user in
-    console.log('User data passed to login on frontend');
-    console.log(userData);
-    logIn(userData).then(async(data)=>{
-      console.log('user data vs data in log frontend');
-      console.log(data);
-      console.log(userData);
+      });
 
-      // console.log(data);
-      const res=await axios.get(
-        `${BASE_URL}${API_ENDPOINTS.getUserProfile}/${userData.email}`
-      );
-      // console.log("USER DETAILS:",res.data.user);
-      // TenantIdSingleton.id = email;
-      // Object.freeze(TenantIdSingleton);
-      // res.data.user.email = "marepalliharish@gmail.com";
-      // res.data.user.lastname = "Marepalli";
-      // setSnackbarMsg(data.message);
-      // setState({ ...state, open: true });
-      setTimeout(()=> {
-        console.log("USER DETAILS stored in session storage fron login on frontend:",res.data.user);
-        window.sessionStorage.setItem("userdetails",JSON.stringify(res.data.user));
-        //window.localStorage.setItem("page","Dashboard");
-        userdetails = res.data.user;
-        // window.location = '/dashboard';
-        navigate("/dashboard");
-      }, 1000)
-    });
+      const data = await res.data;
+      return data;
+    };
+
+    const handleSignUpAndLogin = async (userData) => {
+      try {
+        const signUpResponse = await signUp(userData);
+        
+        if (!signUpResponse?.uuid) {
+          console.log('Sign up failed', signUpResponse);
+          alert('User sign up failed: ' + signUpResponse?.message);
+          return;
+        } else {
+          console.log('User sign up succeeded!');
+        }
+
+        console.log('User data passed to login on frontend');
+        console.log(userData);
+        
+        const loginData = await logIn(userData);
+        console.log('user data vs data in login function on frontend');
+        console.log(loginData);
+        console.log(userData);
+
+        const res = await axios.get(`${BASE_URL}${API_ENDPOINTS.getUserProfile}/${userData.email}`);
+        console.log("USER DETAILS:", res.data.user);
+
+        setTimeout(() => {
+          console.log("USER DETAILS stored in session storage from login on frontend:", res.data.user);
+          window.sessionStorage.setItem("userdetails", JSON.stringify(res.data.user));
+          userdetails = res.data.user;
+          navigate("/dashboard");
+        }, 1000);
+
+      } catch (error) {
+        console.error('Error during sign up and login process:', error);
+      }
+    };
+
+    handleSignUpAndLogin(userData);
 
     return userdetails;
   };

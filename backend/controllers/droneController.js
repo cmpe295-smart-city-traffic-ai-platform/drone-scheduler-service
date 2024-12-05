@@ -153,8 +153,8 @@ const getRandomLidar = () => {
 }
 
 const createDrone=async(req,res,next)=>{
-    const {drone_id,name,manufacturer,model_number,price}=req.body;
-    console.log(drone_id,name,manufacturer,model_number,price);
+    const {drone_id,name,manufacturer,model_number,price, email}=req.body;
+    console.log(drone_id,name,manufacturer,model_number,price, email);
     let existingDrone;
     try{
         existingDrone=await Drone.findOne({drone_id:drone_id});
@@ -175,12 +175,13 @@ const createDrone=async(req,res,next)=>{
     });
 
     const creationDate = new Date();
+    const missionType = getRandomType();
 
     const droneDetails= new DroneDetails({
       drone_id,
       name,
       model: getRandomModel(),
-      type: getRandomType(),
+      type: missionType,
       manufacturer,
       description: getRandomDescription(),
       price,
@@ -198,7 +199,33 @@ const createDrone=async(req,res,next)=>{
       last_known_long: getRandomLong(),
       last_known_status: getRandomStatus(),
       service_types: getRandomServiceType(),
-  });
+    });
+
+    const mid = (Math.random() + 1).toString(36).substring(7);
+
+    const mission = new Mission({
+      drone_id,
+      mission_type: missionType,
+      mission_location: "San Jose Airport",
+      mission_distance: 650.2,
+      mission_waypoints: [],
+      mission_id: mid,
+      mission_status: "Planned",
+      telemetry: [],
+      lineCoords: [],
+      user_id: email,
+      mission_description: "This is a Surveillance mission at San Jose Airport.",
+      mission_end_time: creationDate,
+      mission_start_time: creationDate,
+      mission_global_settings: {
+        aircraftType: "copter",
+        defaultFrame: 3,
+        defaultHeading: null,
+        defaultSpeed: 5,
+        defaultTerrainAlt: 20,
+      },
+    })
+
     console.log("Adding Drone");
 
     try{
@@ -213,6 +240,14 @@ const createDrone=async(req,res,next)=>{
       console.log("drone details saved");
     }catch (err){
       console.log('drone details error');
+      console.log(err);
+    }
+
+    try{
+      await mission.save();
+      console.log("mission saved");
+    }catch (err){
+      console.log('mission error');
       console.log(err);
     }
 
@@ -351,6 +386,8 @@ const getDrone=async(req,res,next)=>{
 }
 
 const getDronesForMap=async(req,res,next)=>{
+  console.log(req.body);
+  console.log('===')
   const {uuid,role}=req.body;
   console.log(uuid,role);
   let email = '';
@@ -382,8 +419,11 @@ const getDronesForMap=async(req,res,next)=>{
     return res.status(200).json(results);
   } else if (role === 'agent') {
     // Using uuid get unqiue email from users model
+    console.log('uuid found:', uuid)
     try {
       let user=await User.findOne({uuid:uuid});
+      console.log('user found:', user)
+
       email = user.email;
     } catch (e) {
       console.log(e);
@@ -393,6 +433,7 @@ const getDronesForMap=async(req,res,next)=>{
     // From unqiue email get drone id, drone name, and status from mission model
     try {
       let missions=await Mission.find({user_id:email});
+      console.log('missions:',missions);
 
       for (let i=0; i<missions.length; i++) {
         if (!drone_ids.includes(missions[i].drone_id)) {
